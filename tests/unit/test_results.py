@@ -1,3 +1,4 @@
+from datetime import UTC
 from typing import Union
 from unittest.mock import MagicMock
 
@@ -1089,9 +1090,9 @@ def test_result_web_link_missing_in_serialized() -> None:
 def test_result_times_round_trip_as_spec_strings() -> None:
     """A result keeps real time values but stores the strings the spec requires."""
 
-    from datetime import datetime, timedelta, timezone
+    from datetime import datetime, timedelta
 
-    started = datetime(2024, 8, 15, 13, 15, 6, 556611, tzinfo=timezone.utc)
+    started = datetime(2024, 8, 15, 13, 15, 6, 556611, tzinfo=UTC)
     finished = started + timedelta(seconds=1, microseconds=200000)
 
     result = Result(
@@ -1119,7 +1120,7 @@ def test_zero_microseconds_keep_a_fractional_second() -> None:
 
     from datetime import datetime, timedelta, timezone
 
-    started = datetime(2024, 8, 15, 13, 15, 6, tzinfo=timezone.utc)
+    started = datetime(2024, 8, 15, 13, 15, 6, tzinfo=UTC)
     behind = datetime(2024, 8, 15, 13, 15, 6, tzinfo=timezone(timedelta(hours=-5)))
 
     result = Result(name='/test/one', start_time=started, end_time=behind)
@@ -1133,18 +1134,18 @@ def test_zero_microseconds_keep_a_fractional_second() -> None:
 def test_result_time_parser_rejects_spec_violations() -> None:
     """A stored time that breaks the result spec is refused, not guessed."""
 
-    from datetime import datetime, timedelta, timezone
+    from datetime import datetime, timedelta
 
     result = Result(
         name='/test/one',
-        start_time=datetime(2024, 8, 15, 13, 15, 6, tzinfo=timezone.utc),
+        start_time=datetime(2024, 8, 15, 13, 15, 6, tzinfo=UTC),
         duration=timedelta(seconds=1),
     )
     stored = result.to_serialized()
 
     stored['start-time'] = '2024-08-15T13:15:06'
     restored = Result.from_serialized(stored)
-    assert restored.start_time == datetime(2024, 8, 15, 13, 15, 6, tzinfo=timezone.utc)
+    assert restored.start_time == datetime(2024, 8, 15, 13, 15, 6, tzinfo=UTC)
 
     stored['start-time'] = '2024-08-15T13:15:06.556611+00:00'
     stored['duration'] = '00:99:00'
@@ -1158,7 +1159,8 @@ def test_result_time_parser_rejects_spec_violations() -> None:
 
 
 def test_result_timestamp_accepts_isoformat_variants() -> None:
-    """A timestamp without a timezone is read as UTC.
+    """
+    A timestamp without a timezone is read as UTC.
 
     The compact form and a space separator are accepted too, because
     ``fromisoformat`` reads them. A bare time is refused.

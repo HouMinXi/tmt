@@ -208,17 +208,17 @@ class BaseResult(SerializableContainer):
     )
 
     start_time: Optional[datetime] = field(
-        default=None,
+        default=cast(Optional[datetime], None),
         serialize=lambda value: None if value is None else tmt.utils.format_timestamp(value),
         unserialize=lambda value: None if value is None else tmt.utils.parse_timestamp(value),
     )
     end_time: Optional[datetime] = field(
-        default=None,
+        default=cast(Optional[datetime], None),
         serialize=lambda value: None if value is None else tmt.utils.format_timestamp(value),
         unserialize=lambda value: None if value is None else tmt.utils.parse_timestamp(value),
     )
     duration: Optional[timedelta] = field(
-        default=None,
+        default=cast(Optional[timedelta], None),
         serialize=lambda value: None if value is None else tmt.utils.format_duration(value),
         unserialize=lambda value: None if value is None else tmt.utils.parse_duration(value),
     )
