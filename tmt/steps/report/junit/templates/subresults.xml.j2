@@ -11,7 +11,7 @@
 
     {% block testsuites %}
         {% for result in RESULTS %}
-            {% set main_test_duration = result.duration | duration_to_seconds | float %}
+            {% set main_test_duration = result.duration | duration_to_seconds %}
 
             {#
                 Fix the count of test cases in the testsuite, because one extra

@@ -534,6 +534,10 @@ class ReportReportPortal(tmt.steps.report.ReportPlugin[ReportReportPortalData]):
             )
 
     @property
+    def datetime(self) -> datetime.datetime:
+        return datetime.datetime.now(datetime.UTC)
+
+    @property
     def headers(self) -> dict[str, str]:
         return {
             "Authorization": f"Bearer {self.data.token}",
@@ -748,16 +752,16 @@ class ReportReportPortal(tmt.steps.report.ReportPlugin[ReportReportPortalData]):
         """
 
         assert self.step.plan.my_run is not None
-        # Use the current time as a default, but this is the worst case scenario
+        # Use the current datetime as a default, but this is the worst case scenario
         # and we should use timestamps from results log as much as possible.
-        launch_start_time = datetime.datetime.now(datetime.timezone.utc)
+        launch_start_time = self.datetime
 
         # Support for idle tests
         executed = bool(self.step.plan.execute.results())
         if executed:
             # Launch time should be the earliest start time of all plans.
             launch_start_time = min(
-                r.start_time or launch_start_time for r in self.step.plan.execute.results()
+                r.start_time or self.datetime for r in self.step.plan.execute.results()
             )
 
         # Create launch, suites (if "--suite_per_plan") and tests;

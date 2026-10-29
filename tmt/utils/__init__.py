@@ -2610,7 +2610,7 @@ def render_report(
     yield (
         f'# Started at {timer.start_time_formatted},'
         f' finished at {timer.end_time_formatted}'
-        f' ({timer.duration_formatted})'
+        f' ({timer.duration})'
     )
 
     if report is not None:
